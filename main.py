@@ -28,6 +28,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 from  selenium.webdriver.support import  expected_conditions as EC
 
 
+
+
 def main(z_name):
     # png = {"googleExe": {"imageIcon": "./image/google.png"}, "dingwei": {"imageIcon": "./image/img_8.png"},
     #        "time": {"imageIcon": "./image/img_9.png"}}
@@ -39,7 +41,7 @@ def main(z_name):
     # pt.moveTo(x, y, duration=0.5)  # 移动到google图标位置
     # pt.leftClick(x, y, duration=0.1)  # 点击google图标
     chrome_options = Options()
-    chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9223")
+    chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
     chrome_driver = "/usr/local/bin/chromedriver"
     # driver = webdriver.Chrome(chrome_driver, options=chrome_options)
     s = Service("/usr/local/bin/chromedriver")
@@ -52,9 +54,13 @@ def main(z_name):
             print(driver.title)
             print("&&&&")
             break
-    zaitianyifen_element= WebDriverWait(driver, 100).until(lambda x: x.find_element(By.XPATH, '//*[contains(text(),"再填一份")]'))
-    action = ActionChains(driver)
-    action.click(zaitianyifen_element).perform()
+    try:
+        zaitianyifen_element= WebDriverWait(driver, 1).until(lambda x: x.find_element(By.XPATH, '//*[contains(text(),"再填一份")]'))
+        action = ActionChains(driver)
+        action.click(zaitianyifen_element).perform()
+    except Exception as e:
+        print(e)
+    # time.sleep(1)
 
 
 
@@ -96,8 +102,7 @@ def main(z_name):
                 module = None#所属模块
                 level = None#等级
                 zuzhang = None#组长
-
-
+                commit = None #commit
 
                 #获取问题分类
                 question_category = 1 #AI问题
@@ -106,6 +111,10 @@ def main(z_name):
                 branch_re_compile = re.compile(r"Branch:.*")
                 branch = branch_re_compile.findall(element.text)[0].replace("Branch:", "").strip()
                 # print("Branch:",branch)
+                #获取commit
+                commit_re_compile = re.compile(r"Commit:.{8}")
+                commit = commit_re_compile.findall(element.text)[0].replace("Commit:", "").strip()
+                # print("commit:",commit)
                 #获取slack链接
                 slack_link_element = None
                 try:
@@ -349,19 +358,6 @@ def main(z_name):
                                 break
 
                         # break
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
