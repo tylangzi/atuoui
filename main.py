@@ -119,7 +119,8 @@ def main(z_name):
                 # print("Branch:",branch)
                 #获取commit
                 commit_re_compile = re.compile(r"Commit:.{8}")
-                commit = commit_re_compile.findall(element.text)[0].replace("Commit:", "").strip()
+                commit_info = commit_re_compile.findall(element.text)[0].replace("Commit:", "").strip()
+                c_info = commit_info
                 # print("commit:",commit)
                 #获取slack链接
                 slack_link_element = None
@@ -396,6 +397,11 @@ def main(z_name):
                     action.scroll_to_element(li).perform()
                     slack_link = pc.paste()
 
+                    # 获取commit
+                    commit_re_compile = re.compile(r"Commit:.{8}")
+                    commit_info = commit_re_compile.findall(li.text)[0].replace("Commit:", "").strip()
+                    # print("commit:",commit)
+
                     re_compile = re.compile(r'Date:.{10}')
                     print(re_compile.findall(li.text)[0].replace("Date:2022/", "").strip())
                     ceshi_date = re_compile.findall(li.text)[0].replace("Date:2022/", "").strip()
@@ -452,7 +458,9 @@ def main(z_name):
                             xpath = "//*[starts-with(text(),'Date')]/../../../../following-sibling::tr[{}]/td[1]".format(
                                 index)
                             huibaoren_element = driver.find_element(By.XPATH, xpath)
-                            genjin_people = "@pinyihu"
+
+                            genjin_people = "@xiaolonghuang {0} {1}".format(ceshi_date,commit_info)
+
                             js = "arguments[0].innerHTML='" + genjin_people + "'"
                             driver.execute_script(js, huibaoren_element)
 
