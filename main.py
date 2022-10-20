@@ -397,7 +397,7 @@ def main(z_name):
                         action = ActionChains(driver)
                         action.scroll_to_element(li).perform()
                         slack_link = pc.paste()
-    
+
                         # 获取commit
                         commit_re_compile = re.compile(r"Commit:.{8}")
                         commit_info = commit_re_compile.findall(li.text)[0].replace("Commit:", "").strip()
@@ -555,6 +555,13 @@ def main(z_name):
                         actions.perform()
                         pt.hotkey('backspace')
                         pt.hotkey('f11')
+
+                        # 切换到slak页面
+                        slack = "Slack"
+                        for window in driver.window_handles:
+                            driver.switch_to.window(window)
+                            if slack in driver.title:
+                                break
 
                     # except:
                     #     pass
