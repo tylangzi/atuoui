@@ -58,7 +58,8 @@ def main(z_name):
             print("&&&&")
             break
     try:
-        zaitianyifen_element= WebDriverWait(driver, 1).until(lambda x: x.find_element(By.XPATH, '//*[contains(text(),"再填一份")]'))
+        # zaitianyifen_element= WebDriverWait(driver, 1).until(lambda x: x.find_element(By.XPATH, '//*[contains(text(),"再填一份")]'))
+        zaitianyifen_element = driver.find_element(By.XPATH,'//*[contains(text(),"再填一份")]')
         action = ActionChains(driver)
         action.click(zaitianyifen_element).perform()
     except Exception as e:
@@ -96,6 +97,13 @@ def main(z_name):
 
         try:
             if key == keyboard.Key.alt:
+                slack = "Slack"
+                if slack not in driver.title:
+                    # 切换页面
+                    for window in driver.window_handles:
+                        driver.switch_to.window(window)
+                        if slack in driver.title:
+                            break
                 question_category = None  #问题分类
                 branch = None #分支
                 slack_link = None#slack链接
@@ -388,9 +396,8 @@ def main(z_name):
                     confluence_window = main_windows
                     driver.switch_to.window(confluence_window)
                 # time.sleep(0.5)
-
                 lis_head = driver.find_elements(By.XPATH, "//*[starts-with(text(),'Date')]")
-                pt.hotkey('f11')
+                # pt.hotkey('f11')
                 # time.sleep(10)
                 for li in lis_head:
                     if lis_head.index(li) == 0:
@@ -412,8 +419,9 @@ def main(z_name):
                         lis_holetext = li.find_elements(By.XPATH, "./../../../p")
                         index = 1
                         for p in lis_holetext:
-                            action = ActionChains(driver)
-                            action.scroll_to_element(p).perform()
+
+                            # action = ActionChains(driver)
+                            # action.scroll_to_element(p).perform()
                             # time.sleep(0.5)
                             if "@" not in p.text:
                                 # print(p.text)
@@ -441,11 +449,16 @@ def main(z_name):
                                 xpath = "//*[starts-with(text(),'Date')]/../../../../following-sibling::tr[{}]/td[2]".format(
                                     index)
                                 paste_loc = driver.find_element(By.XPATH, xpath)
-                                # action = ActionChains(driver)
-                                # action.scroll_to_element(paste_loc).perform()
-                                js = 'arguments[0].scrollIntoView()'
-                                driver.execute_script(js, paste_loc)
-                                html = """<p><a href="https://szexa.xray.autox.tech/?id=playback/pacifica-cn-371/20221019/2022-10-19-10-11-23&amp;t=3582.1#obstacleId=259093">Planning/Action/Static Nudge/No Trigger</a> (没有避让右测单车)</p>"""
+                                print("长度：",len(lis_holetext))
+                                if len(lis_holetext) > 6:
+                                    js = 'arguments[0].scrollIntoView()'
+                                    js = "window.scrollBy(0,50)"  # 向下滑动500个像素
+                                    driver.execute_script(js)
+                                    # js = 'arguments[0].scrollIntoView()'
+                                    # driver.execute_script(js, paste_loc)
+
+                                    time.sleep(0.1)
+
                                 html = p.get_attribute("outerHTML")
                                 re_compile = re.compile(r'\W\w{5}\s+\d{1}\W')
                                 try:
@@ -453,35 +466,58 @@ def main(z_name):
                                     after_html = html.replace(level_info, "")
                                 except Exception as e:
                                     after_html = html
-                                # print("html",html)
-                                # html2 = """<p><a href="https://szexa.xray.autox.tech/?id=playback/pacifica-cn-371/20221019/2022-10-19-10-11-23&amp;t=3582.1#obstacleId=259093">Planning/Action/Static Nudge/No Trigger</a> </p>"""
+
                                 js = "arguments[0].innerHTML='" + after_html + "'"
                                 driver.execute_script(js, paste_loc)
 
-                                xpath = "//*[starts-with(text(),'Date')]/../../../../following-sibling::tr[{}]/td[1]".format(
-                                    index)
-                                huibaoren_element = driver.find_element(By.XPATH, xpath)
-
-                                genjin_people = "@pinyihu"
-
-                                js = "arguments[0].innerHTML='" + genjin_people + "'"
-                                driver.execute_script(js, huibaoren_element)
-
                                 index += 1
+
 
                             else:
                                 pass
+                        if len(lis_holetext) > 6:
+                            time.sleep(0.1)
                         for i in range(1, index):
-                            print(index - i, "index")
+                            # print("i的值：",i)
+                            # print(index - i, "index")
+                            xpath = "//*[starts-with(text(),'Date')]/../../../../following-sibling::tr[{}]/td[1]".format(
+                                10)
+                            xialianghang_element = driver.find_element(By.XPATH, xpath)
+                            js = 'arguments[0].scrollIntoView()'
+                            driver.execute_script(js, xialianghang_element)
+                            time.sleep(0.1)
+
+                            xpath = "//*[starts-with(text(),'Date')]/../../../../following-sibling::tr[{}]/td[1]".format(
+                                index - i)
+                            huibaoren_element = driver.find_element(By.XPATH, xpath)
+
+                            genjin_people = "@ Xiaolong Huang"
+                            # genjin_people = "@Pinyi Hu"
+                            huibaoren_html = """<p><span contenteditable="false" id="617792abb9c549006fd4c154" text="" accesslevel="CONTAINER" usertype="null" class="mentionView-content-wrap inlineNodeView"><span class="inlineNodeViewAddZeroWidthSpace"></span>​<span data-mention-id="617792abb9c549006fd4c154" data-access-level="CONTAINER" spellcheck="false"><span spellcheck="false" class="css-19j4552">{0}</span></span><span class="inlineNodeViewAddZeroWidthSpace"></span></span>  {1} <span class="code" spellcheck="false">{2}</span></p>""".format(
+                                genjin_people, ceshi_date, commit_info)
+
+                            genjin_people = "@pinyihu"
+
+                            js = "arguments[0].innerHTML='" + huibaoren_html + "'"
+                            driver.execute_script(js, huibaoren_element)
+
                             xpath = "//*[starts-with(text(),'Date')]/../../../../following-sibling::tr[{}]/td[2]".format(
                                 index - i)
                             paste_loc = driver.find_element(By.XPATH, xpath)
 
                             # 点击链接
-                            paste_loc_click = paste_loc.find_element(By.XPATH, "./p/a")
-                            paste_loc_click.click()
+                            try:
+                                paste_loc_click = paste_loc.find_element(By.XPATH, "./p/a")
+                                paste_loc_click.click()
+                            except Exception as e:
+                                print(e)
+                                continue
                             # 截图
-                            element = driver.find_element(By.XPATH, "//*/span[@aria-label='在新选项卡打开链接']")
+                            try:
+                                element = driver.find_element(By.XPATH, "//*/span[@aria-label='在新选项卡打开链接']")
+                            except Exception as e:
+                                print(e)
+                                element = driver.find_element(By.XPATH, "//*/span[@aria-label='Open link in a new tab']")
                             js = "arguments[0].click()"
                             driver.execute_script(js, element)
                             print(driver.title)
@@ -501,11 +537,11 @@ def main(z_name):
                             pt.hotkey('r')
                             time.sleep(0.3)
                             pt.hotkey('v')
-                            time.sleep(0.3)
+                            # time.sleep(0.1)
                             pt.hotkey('v')
-                            time.sleep(0.3)
+                            # time.sleep(0.1)
                             pt.hotkey('v')
-                            time.sleep(0.3)
+                            # time.sleep(0.1)
                             pt.hotkey('ctrl', 'r')
                             time.sleep(0.3)
                             pt.hotkey('enter')
@@ -530,18 +566,26 @@ def main(z_name):
                             action.click(tupian_element).perform()
 
                             pt.hotkey('ctrl', 'v')
-                            time.sleep(0.5)
+                            ispicture_element = WebDriverWait(tupian_element, 100).until(
+                                            lambda x: x.find_element(By.XPATH, "./div"))
+                            # time.sleep(0.5)
                             # pt.hotkey('right')
                             xpath = "//*[starts-with(text(),'Date')]/../../../../following-sibling::tr[{}]/td[4]".format(
                                 index - i)
-                            tupian_element = driver.find_element(By.XPATH, xpath)
+                            slack_element = driver.find_element(By.XPATH, xpath)
+                            slack_html = """<p><span contenteditable="false" url="{0}" data="null" class="inlineCardView-content-wrap inlineNodeView" draggable="true"><span class="inlineNodeViewAddZeroWidthSpace"></span>​<span class="card"><span class="loader-wrapper"><a href="{0}" tabindex="0" role="button" data-testid="inline-card-unauthorized-view" class="css-1t2aoot e92dmmh0"><span class="css-1awfwlv e14lsucj2" style="color: var(--ds-text-subtle, #42526E);"><span class="css-1n3444m e14lsucj6"><span class="css-w2w4jx e14lsucj7"></span><img class="smart-link-icon css-qq5phv ewpob9m0" src="https://a.slack-edge.com/80588/marketing/img/meta/favicon-32.png" data-testid="inline-card-icon-and-title-image"></span><span class="smart-link-title-wrapper css-0 e14lsucj8"><span class="css-7yb0z4 e846n4e3">{0}</span> - <span class="css-1f7fjjd e846n4e0" data-testid="button-connect-account" type="button" tabindex="0"><span class="css-1we84oz"><span>Connect to preview</span></span></span></span></span></a></span></span><span class="inlineNodeViewAddZeroWidthSpace"></span></span> </p>""".format(slack_link)
+                            # slack_html = """<span contenteditable="false" url="{0}" data="null" class="inlineCardView-content-wrap inlineNodeView" draggable="true"><span class="inlineNodeViewAddZeroWidthSpace"></span>​<span class="card"><span class="loader-wrapper"><a href="{0}" tabindex="0" role="button" data-testid="inline-card-unauthorized-view" class="css-1t2aoot e92dmmh0"><span class="css-1awfwlv e14lsucj2" style="color: var(--ds-text-subtle, #42526E);"><span class="css-1n3444m e14lsucj6"><span class="css-w2w4jx e14lsucj7"></span><img class="smart-link-icon css-qq5phv ewpob9m0" src="https://a.slack-edge.com/80588/marketing/img/meta/favicon-32.png" data-testid="inline-card-icon-and-title-image"></span><span class="smart-link-title-wrapper css-0 e14lsucj8"><span class="css-7yb0z4 e846n4e3">{0}</span> - <span class="css-1f7fjjd e846n4e0" data-testid="button-connect-account" type="button" tabindex="0"><span class="css-1we84oz"><span>Connect to preview</span></span></span></span></span></a></span></span><span class="inlineNodeViewAddZeroWidthSpace"></span></span>"""
+                            # js = "arguments[0].outerHTML='" + slack_html + "'"
+                            # driver.execute_script(js, slack_element)
                             action = ActionChains(driver)
-                            action.scroll_to_element(tupian_element).perform()
-                            action.click(tupian_element).perform()
+                            action.scroll_to_element(slack_element).perform()
+                            action.click(slack_element).perform()
                             pc.copy(slack_link)
                             pt.hotkey('ctrl', 'v')
                             # js = "arguments[0].innerHTML='" + slack_link + "'"
                             # driver.execute_script(js, tupian_element)
+
+
 
                             i += 1
                         # 清空表格
@@ -554,14 +598,14 @@ def main(z_name):
                         actions.drag_and_drop(source, target)
                         actions.perform()
                         pt.hotkey('backspace')
-                        pt.hotkey('f11')
+                        # pt.hotkey('f11')
 
-                        # 切换到slak页面
-                        slack = "Slack"
-                        for window in driver.window_handles:
-                            driver.switch_to.window(window)
-                            if slack in driver.title:
-                                break
+                        # # 切换到slak页面
+                        # slack = "Slack"
+                        # for window in driver.window_handles:
+                        #     driver.switch_to.window(window)
+                        #     if slack in driver.title:
+                        #         break
 
                     # except:
                     #     pass
