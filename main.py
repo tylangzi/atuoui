@@ -30,7 +30,7 @@ from  selenium.webdriver.support import  expected_conditions as EC
 
 
 
-def main(z_name):
+def main(z_name,my_name,port):
     print("#" * 30)
     print("已进入程序")
     print("--alt-填双表-，--F8-填二级表格-,--F2-发slack-")
@@ -44,11 +44,12 @@ def main(z_name):
     # pt.moveTo(x, y, duration=0.5)  # 移动到google图标位置
     # pt.leftClick(x, y, duration=0.1)  # 点击google图标
     chrome_options = Options()
-    chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
+    chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:{}".format(port))
     chrome_driver = "/usr/local/bin/chromedriver"
     # driver = webdriver.Chrome(chrome_driver, options=chrome_options)
     s = Service("/usr/local/bin/chromedriver")
     driver = webdriver.Chrome(options=chrome_options, service=s)
+
     # 切换到AutoX出车问题记录
     for window in driver.window_handles:
         driver.switch_to.window(window)
@@ -501,13 +502,11 @@ def main(z_name):
                                 index - i)
                             huibaoren_element = driver.find_element(By.XPATH, xpath)
 
-                            genjin_people = "@ Xiaolong Huang"
-                            # genjin_people = "@Pinyi Hu"
+                            genjin_people = "@ "+ my_name
                             huibaoren_html = """<p><span contenteditable="false" id="617792abb9c549006fd4c154" text="" accesslevel="CONTAINER" usertype="null" class="mentionView-content-wrap inlineNodeView"><span class="inlineNodeViewAddZeroWidthSpace"></span>​<span data-mention-id="617792abb9c549006fd4c154" data-access-level="CONTAINER" spellcheck="false"><span spellcheck="false" class="css-19j4552">{0}</span></span><span class="inlineNodeViewAddZeroWidthSpace"></span></span>  {1} <span class="code" spellcheck="false">{2}</span></p>""".format(genjin_people,ceshi_date,commit_info)
                             # huibaoren_html = """<p><span contenteditable="false" id="617792abb9c549006fd4c154" text="" accesslevel="CONTAINER" usertype="null" class="mentionView-content-wrap inlineNodeView"><span class="inlineNodeViewAddZeroWidthSpace"></span>​<span data-mention-id="617792abb9c549006fd4c154" data-access-level="CONTAINER" spellcheck="false"><span spellcheck="false" class="css-19j4552">{0}</span></span><span class="inlineNodeViewAddZeroWidthSpace"></span></span><span class="code" spellcheck="false"> </span></p>""".format(
                             #     genjin_people)
 
-                            genjin_people = "@pinyihu"
 
                             js = "arguments[0].innerHTML='" + huibaoren_html + "'"
                             driver.execute_script(js, huibaoren_element)
@@ -951,14 +950,30 @@ def main(z_name):
             on_release=on_release) as listener:
         listener.join()
 
+def name_config():
+    try:
+        with open("name_config.txt",'r') as f:
+            for line in f.readlines():
+                print(line.strip())
+                line = line.split(" ")
+                return line[0],line[1],line[2]
+    except:
+        print("请输入组长的名字")
+        z_name = input()
+        print("请输入你名字")
+        my_name = input()
+        print("请输入你浏览器的端口号，建议为9222")
+        port = input()
+        with open("name_config.txt",'w') as f:
+            f.writelines([z_name," ",my_name," ",port])
+        return z_name,my_name,port
 
 
 
-# Press the green button in the gutter to run the script.
+            # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    z_name = "刘永欢"
-    # z_name = "莫世林"
-    main(z_name)
+    z_name,my_name,port =name_config()
+    main(z_name,my_name,port)
 
 
 
