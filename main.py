@@ -460,13 +460,22 @@ def main(z_name):
                                     time.sleep(0.1)
 
                                 html = p.get_attribute("outerHTML")
+
+
                                 re_compile = re.compile(r'\W\w{5}\s+\d{1}\W')
                                 try:
                                     level_info = re_compile.findall(html)[0].strip()
                                     after_html = html.replace(level_info, "")
                                 except Exception as e:
                                     after_html = html
-
+                                    # 解决链接缺失超链接问题
+                                if "</a></p>" in after_html:
+                                    after_html = after_html.replace("</a></p>", "</a> </p>")
+                                elif "</a><br></p>" in after_html:
+                                    after_html = after_html.replace("</a><br></p>", "</a> </p>")
+                                # print("#############")
+                                # print("html:元素代码", after_html)
+                                # print("#############")
                                 js = "arguments[0].innerHTML='" + after_html + "'"
                                 driver.execute_script(js, paste_loc)
 
@@ -480,12 +489,13 @@ def main(z_name):
                         for i in range(1, index):
                             # print("i的值：",i)
                             # print(index - i, "index")
+                            # time.sleep(150)
                             xpath = "//*[starts-with(text(),'Date')]/../../../../following-sibling::tr[{}]/td[1]".format(
                                 10)
                             xialianghang_element = driver.find_element(By.XPATH, xpath)
-                            js = 'arguments[0].scrollIntoView()'
-                            driver.execute_script(js, xialianghang_element)
-                            time.sleep(0.1)
+                            # js = 'arguments[0].scrollIntoView()'
+                            # driver.execute_script(js, xialianghang_element)
+                            # time.sleep(0.1)
 
                             xpath = "//*[starts-with(text(),'Date')]/../../../../following-sibling::tr[{}]/td[1]".format(
                                 index - i)
@@ -493,8 +503,9 @@ def main(z_name):
 
                             genjin_people = "@ Xiaolong Huang"
                             # genjin_people = "@Pinyi Hu"
-                            huibaoren_html = """<p><span contenteditable="false" id="617792abb9c549006fd4c154" text="" accesslevel="CONTAINER" usertype="null" class="mentionView-content-wrap inlineNodeView"><span class="inlineNodeViewAddZeroWidthSpace"></span>​<span data-mention-id="617792abb9c549006fd4c154" data-access-level="CONTAINER" spellcheck="false"><span spellcheck="false" class="css-19j4552">{0}</span></span><span class="inlineNodeViewAddZeroWidthSpace"></span></span>  {1} <span class="code" spellcheck="false">{2}</span></p>""".format(
-                                genjin_people, ceshi_date, commit_info)
+                            huibaoren_html = """<p><span contenteditable="false" id="617792abb9c549006fd4c154" text="" accesslevel="CONTAINER" usertype="null" class="mentionView-content-wrap inlineNodeView"><span class="inlineNodeViewAddZeroWidthSpace"></span>​<span data-mention-id="617792abb9c549006fd4c154" data-access-level="CONTAINER" spellcheck="false"><span spellcheck="false" class="css-19j4552">{0}</span></span><span class="inlineNodeViewAddZeroWidthSpace"></span></span>  {1} <span class="code" spellcheck="false">{2}</span></p>""".format(genjin_people,ceshi_date,commit_info)
+                            # huibaoren_html = """<p><span contenteditable="false" id="617792abb9c549006fd4c154" text="" accesslevel="CONTAINER" usertype="null" class="mentionView-content-wrap inlineNodeView"><span class="inlineNodeViewAddZeroWidthSpace"></span>​<span data-mention-id="617792abb9c549006fd4c154" data-access-level="CONTAINER" spellcheck="false"><span spellcheck="false" class="css-19j4552">{0}</span></span><span class="inlineNodeViewAddZeroWidthSpace"></span></span><span class="code" spellcheck="false"> </span></p>""".format(
+                            #     genjin_people)
 
                             genjin_people = "@pinyihu"
 
@@ -582,6 +593,7 @@ def main(z_name):
                             action.click(slack_element).perform()
                             pc.copy(slack_link)
                             pt.hotkey('ctrl', 'v')
+
                             # js = "arguments[0].innerHTML='" + slack_link + "'"
                             # driver.execute_script(js, tupian_element)
 
