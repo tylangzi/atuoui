@@ -396,10 +396,7 @@ def main(z_name,my_name,port):
                     main_windows = driver.current_window_handle
                     confluence_window = main_windows
                     driver.switch_to.window(confluence_window)
-                # time.sleep(0.5)
                 lis_head = driver.find_elements(By.XPATH, "//*[starts-with(text(),'Date')]")
-                # pt.hotkey('f11')
-                # time.sleep(10)
                 for li in lis_head:
                     if lis_head.index(li) == 0:
                         action = ActionChains(driver)
@@ -420,10 +417,6 @@ def main(z_name,my_name,port):
                         lis_holetext = li.find_elements(By.XPATH, "./../../../p")
                         index = 1
                         for p in lis_holetext:
-
-                            # action = ActionChains(driver)
-                            # action.scroll_to_element(p).perform()
-                            # time.sleep(0.5)
                             if "@" not in p.text:
                                 # print(p.text)
                                 # 获取问题描述信息
@@ -451,18 +444,9 @@ def main(z_name,my_name,port):
                                     index)
                                 paste_loc = driver.find_element(By.XPATH, xpath)
                                 print("长度：",len(lis_holetext))
-                                if len(lis_holetext) > 6:
-                                    js = 'arguments[0].scrollIntoView()'
-                                    js = "window.scrollBy(0,50)"  # 向下滑动500个像素
-                                    driver.execute_script(js)
-                                    # js = 'arguments[0].scrollIntoView()'
-                                    # driver.execute_script(js, paste_loc)
-
-                                    time.sleep(0.1)
-
+                                action = ActionChains(driver)
+                                action.scroll_to_element(paste_loc).click(paste_loc).perform()
                                 html = p.get_attribute("outerHTML")
-
-
                                 re_compile = re.compile(r'\W\w{5}\s+\d{1}\W')
                                 try:
                                     level_info = re_compile.findall(html)[0].strip()
@@ -485,27 +469,16 @@ def main(z_name,my_name,port):
 
                             else:
                                 pass
-                        if len(lis_holetext) > 6:
-                            time.sleep(0.1)
-                        for i in range(1, index):
-                            # print("i的值：",i)
-                            # print(index - i, "index")
-                            # time.sleep(150)
-                            xpath = "//*[starts-with(text(),'Date')]/../../../../following-sibling::tr[{}]/td[1]".format(
-                                10)
-                            xialianghang_element = driver.find_element(By.XPATH, xpath)
-                            # js = 'arguments[0].scrollIntoView()'
-                            # driver.execute_script(js, xialianghang_element)
-                            # time.sleep(0.1)
 
+                        for i in range(1, index):
                             xpath = "//*[starts-with(text(),'Date')]/../../../../following-sibling::tr[{}]/td[1]".format(
                                 index - i)
                             huibaoren_element = driver.find_element(By.XPATH, xpath)
 
                             genjin_people = "@ "+ my_name
-                            huibaoren_html = """<p><span contenteditable="false" id="617792abb9c549006fd4c154" text="" accesslevel="CONTAINER" usertype="null" class="mentionView-content-wrap inlineNodeView"><span class="inlineNodeViewAddZeroWidthSpace"></span>​<span data-mention-id="617792abb9c549006fd4c154" data-access-level="CONTAINER" spellcheck="false"><span spellcheck="false" class="css-19j4552">{0}</span></span><span class="inlineNodeViewAddZeroWidthSpace"></span></span>  {1} <span class="code" spellcheck="false">{2}</span></p>""".format(genjin_people,ceshi_date,commit_info)
-                            # huibaoren_html = """<p><span contenteditable="false" id="617792abb9c549006fd4c154" text="" accesslevel="CONTAINER" usertype="null" class="mentionView-content-wrap inlineNodeView"><span class="inlineNodeViewAddZeroWidthSpace"></span>​<span data-mention-id="617792abb9c549006fd4c154" data-access-level="CONTAINER" spellcheck="false"><span spellcheck="false" class="css-19j4552">{0}</span></span><span class="inlineNodeViewAddZeroWidthSpace"></span></span><span class="code" spellcheck="false"> </span></p>""".format(
-                            #     genjin_people)
+                            # huibaoren_html = """<p><span contenteditable="false" id="617792abb9c549006fd4c154" text="" accesslevel="CONTAINER" usertype="null" class="mentionView-content-wrap inlineNodeView"><span class="inlineNodeViewAddZeroWidthSpace"></span>​<span data-mention-id="617792abb9c549006fd4c154" data-access-level="CONTAINER" spellcheck="false"><span spellcheck="false" class="css-19j4552">{0}</span></span><span class="inlineNodeViewAddZeroWidthSpace"></span></span>  {1} <span class="code" spellcheck="false">{2}</span></p>""".format(genjin_people,ceshi_date,commit_info)
+                            huibaoren_html = """<p><span contenteditable="false" id="617792abb9c549006fd4c154" text="" accesslevel="CONTAINER" usertype="null" class="mentionView-content-wrap inlineNodeView"><span class="inlineNodeViewAddZeroWidthSpace"></span>​<span data-mention-id="617792abb9c549006fd4c154" data-access-level="CONTAINER" spellcheck="false"><span spellcheck="false" class="css-19j4552">{0}</span></span><span class="inlineNodeViewAddZeroWidthSpace"></span></span><span class="code" spellcheck="false"> </span></p>""".format(
+                                genjin_people)
 
 
                             js = "arguments[0].innerHTML='" + huibaoren_html + "'"
@@ -515,89 +488,60 @@ def main(z_name,my_name,port):
                                 index - i)
                             paste_loc = driver.find_element(By.XPATH, xpath)
 
-                            # 点击链接
+
+                            #获取链接url
                             try:
                                 paste_loc_click = paste_loc.find_element(By.XPATH, "./p/a")
-                                paste_loc_click.click()
+                                url = paste_loc_click.get_attribute('href')
+                                # print('url',url)
                             except Exception as e:
                                 print(e)
                                 continue
-                            # 截图
-                            try:
-                                element = driver.find_element(By.XPATH, "//*/span[@aria-label='在新选项卡打开链接']")
-                            except Exception as e:
-                                print(e)
-                                element = driver.find_element(By.XPATH, "//*/span[@aria-label='Open link in a new tab']")
-                            js = "arguments[0].click()"
-                            driver.execute_script(js, element)
-                            print(driver.title)
-                            # 点击链接后重新获取handlelist
-                            handles_list = driver.window_handles
-                            if "xRay" not in driver.title:
-                                for window in handles_list:
-                                    driver.switch_to.window(window)
-                                    if "xRay" in driver.title:
-                                        # pen = driver.find_element(By.XPATH,
-                                        #                           "/html/body/div[1]/div/div[1]/div[2]/div[1]/div[1]/div/div/div/div[1]/div/div/div[2]/div[2]/div[3]/div[4]/div[6]")
-                                        time_element = WebDriverWait(driver, 100).until(
-                                            lambda x: x.find_element(By.XPATH, "//*/div[2]/div[4]/p[1]"))
-                                        break
-                            print(driver.title)
-                            # time.sleep(0.4)
+
+                            #打开链接
+                            driver.execute_script(f'window.open("{url}", "_blank");')
+                            # 切换到新的标签页
+                            driver.switch_to.window(driver.window_handles[-1])
+                            time_element = WebDriverWait(driver, 100).until(
+                                                lambda x: x.find_element(By.XPATH, "//*/div[2]/div[4]/p[1]"))
+
+                            # print(driver.title)
                             pt.hotkey('r')
-                            time.sleep(0.3)
+                            time.sleep(0.1)
                             pt.hotkey('v')
-                            # time.sleep(0.1)
+                            time.sleep(0.1)
                             pt.hotkey('v')
-                            # time.sleep(0.1)
+                            time.sleep(0.1)
                             pt.hotkey('v')
-                            # time.sleep(0.1)
+                            time.sleep(0.1)
                             pt.hotkey('ctrl', 'r')
-                            time.sleep(0.3)
+                            time.sleep(0.1)
                             pt.hotkey('enter')
                             # 关闭窗口
                             driver.close()
-                            # time.sleep(1)
                             # 关闭后切换回来confluence_window
                             print(confluence_window, "confluence_window")
                             driver.switch_to.window(confluence_window)
-                            # break
 
                             # 复制粘贴截图
-                            # time.sleep(0.8)
-
-                            # pt.hotkey('tab')
-                            # time.sleep(0.5)
                             xpath = "//*[starts-with(text(),'Date')]/../../../../following-sibling::tr[{}]/td[3]".format(
                                 index - i)
                             tupian_element = driver.find_element(By.XPATH, xpath)
                             action = ActionChains(driver)
                             action.scroll_to_element(tupian_element).perform()
                             action.click(tupian_element).perform()
-
                             pt.hotkey('ctrl', 'v')
                             ispicture_element = WebDriverWait(tupian_element, 100).until(
                                             lambda x: x.find_element(By.XPATH, "./div"))
-                            # time.sleep(0.5)
-                            # pt.hotkey('right')
+
                             xpath = "//*[starts-with(text(),'Date')]/../../../../following-sibling::tr[{}]/td[4]".format(
                                 index - i)
                             slack_element = driver.find_element(By.XPATH, xpath)
-                            slack_html = """<p><span contenteditable="false" url="{0}" data="null" class="inlineCardView-content-wrap inlineNodeView" draggable="true"><span class="inlineNodeViewAddZeroWidthSpace"></span>​<span class="card"><span class="loader-wrapper"><a href="{0}" tabindex="0" role="button" data-testid="inline-card-unauthorized-view" class="css-1t2aoot e92dmmh0"><span class="css-1awfwlv e14lsucj2" style="color: var(--ds-text-subtle, #42526E);"><span class="css-1n3444m e14lsucj6"><span class="css-w2w4jx e14lsucj7"></span><img class="smart-link-icon css-qq5phv ewpob9m0" src="https://a.slack-edge.com/80588/marketing/img/meta/favicon-32.png" data-testid="inline-card-icon-and-title-image"></span><span class="smart-link-title-wrapper css-0 e14lsucj8"><span class="css-7yb0z4 e846n4e3">{0}</span> - <span class="css-1f7fjjd e846n4e0" data-testid="button-connect-account" type="button" tabindex="0"><span class="css-1we84oz"><span>Connect to preview</span></span></span></span></span></a></span></span><span class="inlineNodeViewAddZeroWidthSpace"></span></span> </p>""".format(slack_link)
-                            # slack_html = """<span contenteditable="false" url="{0}" data="null" class="inlineCardView-content-wrap inlineNodeView" draggable="true"><span class="inlineNodeViewAddZeroWidthSpace"></span>​<span class="card"><span class="loader-wrapper"><a href="{0}" tabindex="0" role="button" data-testid="inline-card-unauthorized-view" class="css-1t2aoot e92dmmh0"><span class="css-1awfwlv e14lsucj2" style="color: var(--ds-text-subtle, #42526E);"><span class="css-1n3444m e14lsucj6"><span class="css-w2w4jx e14lsucj7"></span><img class="smart-link-icon css-qq5phv ewpob9m0" src="https://a.slack-edge.com/80588/marketing/img/meta/favicon-32.png" data-testid="inline-card-icon-and-title-image"></span><span class="smart-link-title-wrapper css-0 e14lsucj8"><span class="css-7yb0z4 e846n4e3">{0}</span> - <span class="css-1f7fjjd e846n4e0" data-testid="button-connect-account" type="button" tabindex="0"><span class="css-1we84oz"><span>Connect to preview</span></span></span></span></span></a></span></span><span class="inlineNodeViewAddZeroWidthSpace"></span></span>"""
-                            # js = "arguments[0].outerHTML='" + slack_html + "'"
-                            # driver.execute_script(js, slack_element)
                             action = ActionChains(driver)
                             action.scroll_to_element(slack_element).perform()
                             action.click(slack_element).perform()
                             pc.copy(slack_link)
                             pt.hotkey('ctrl', 'v')
-
-                            # js = "arguments[0].innerHTML='" + slack_link + "'"
-                            # driver.execute_script(js, tupian_element)
-
-
-
                             i += 1
                         # 清空表格
                         source = driver.find_element(By.XPATH,
@@ -609,17 +553,7 @@ def main(z_name,my_name,port):
                         actions.drag_and_drop(source, target)
                         actions.perform()
                         pt.hotkey('backspace')
-                        # pt.hotkey('f11')
 
-                        # # 切换到slak页面
-                        # slack = "Slack"
-                        # for window in driver.window_handles:
-                        #     driver.switch_to.window(window)
-                        #     if slack in driver.title:
-                        #         break
-
-                    # except:
-                    #     pass
                     else:
                         pass
 
