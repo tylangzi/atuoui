@@ -499,9 +499,9 @@ def main(z_name,my_name,port):
                             huibaoren_element = driver.find_element(By.XPATH, xpath)
 
                             genjin_people = "@ "+ my_name
-                            huibaoren_html = """<p><span contenteditable="false" id="617792abb9c549006fd4c154" text="" accesslevel="CONTAINER" usertype="null" class="mentionView-content-wrap inlineNodeView"><span class="inlineNodeViewAddZeroWidthSpace"></span>​<span data-mention-id="617792abb9c549006fd4c154" data-access-level="CONTAINER" spellcheck="false"><span spellcheck="false" class="css-19j4552">{0}</span></span><span class="inlineNodeViewAddZeroWidthSpace"></span></span>  {1} <span class="code" spellcheck="false">{2}</span></p>""".format(genjin_people,ceshi_date,commit_info)
-                            # huibaoren_html = """<p><span contenteditable="false" id="617792abb9c549006fd4c154" text="" accesslevel="CONTAINER" usertype="null" class="mentionView-content-wrap inlineNodeView"><span class="inlineNodeViewAddZeroWidthSpace"></span>​<span data-mention-id="617792abb9c549006fd4c154" data-access-level="CONTAINER" spellcheck="false"><span spellcheck="false" class="css-19j4552">{0}</span></span><span class="inlineNodeViewAddZeroWidthSpace"></span></span><span class="code" spellcheck="false"> </span></p>""".format(
-                            #     genjin_people)
+                            # huibaoren_html = """<p><span contenteditable="false" id="617792abb9c549006fd4c154" text="" accesslevel="CONTAINER" usertype="null" class="mentionView-content-wrap inlineNodeView"><span class="inlineNodeViewAddZeroWidthSpace"></span>​<span data-mention-id="617792abb9c549006fd4c154" data-access-level="CONTAINER" spellcheck="false"><span spellcheck="false" class="css-19j4552">{0}</span></span><span class="inlineNodeViewAddZeroWidthSpace"></span></span>  {1} <span class="code" spellcheck="false">{2}</span></p>""".format(genjin_people,ceshi_date,commit_info)
+                            huibaoren_html = """<p><span contenteditable="false" id="617792abb9c549006fd4c154" text="" accesslevel="CONTAINER" usertype="null" class="mentionView-content-wrap inlineNodeView"><span class="inlineNodeViewAddZeroWidthSpace"></span>​<span data-mention-id="617792abb9c549006fd4c154" data-access-level="CONTAINER" spellcheck="false"><span spellcheck="false" class="css-19j4552">{0}</span></span><span class="inlineNodeViewAddZeroWidthSpace"></span></span><span class="code" spellcheck="false"> </span></p>""".format(
+                                genjin_people)
 
 
                             js = "arguments[0].innerHTML='" + huibaoren_html + "'"
@@ -516,19 +516,49 @@ def main(z_name,my_name,port):
                             try:
                                 paste_loc_click = paste_loc.find_element(By.XPATH, "./p/a")
                                 url = paste_loc_click.get_attribute('href')
-                                # print('url',url)
+                                print('url',url)
                             except Exception as e:
                                 print(e)
                                 continue
 
-                            #打开链接
-                            driver.execute_script(f'window.open("{url}", "_blank");')
-                            # 切换到新的标签页
-                            driver.switch_to.window(driver.window_handles[-1])
-                            time_element = WebDriverWait(driver, 100).until(
-                                                lambda x: x.find_element(By.XPATH, "//*/div[2]/div[4]/p[1]"))
+                            # #打开链接
+                            # driver.execute_script(f'window.open("{url}", "_blank");')
+                            #
+                            # # 切换到新的标签页
+                            # driver.switch_to.window(driver.window_handles[-1])
+                            # time_element = WebDriverWait(driver, 100).until(
+                            #                     lambda x: x.find_element(By.XPATH, "//*/div[2]/div[4]/p[1]"))
 
                             # print(driver.title)
+                            # 点击链接
+                            try:
+                                paste_loc_click = paste_loc.find_element(By.XPATH, "./p/a")
+                                paste_loc_click.click()
+                            except Exception as e:
+                                print(e)
+                                continue
+                            # 截图
+                            try:
+                                element = driver.find_element(By.XPATH, "//*/span[@aria-label='在新选项卡打开链接']")
+                            except Exception as e:
+                                print(e)
+                                element = driver.find_element(By.XPATH,
+                                                              "//*/span[@aria-label='Open link in a new tab']")
+                            js = "arguments[0].click()"
+                            driver.execute_script(js, element)
+                            print(driver.title)
+                            # 点击链接后重新获取handlelist
+                            handles_list = driver.window_handles
+                            if "xRay" not in driver.title:
+                                for window in handles_list:
+                                    driver.switch_to.window(window)
+                                    if "xRay" in driver.title:
+                                        # pen = driver.find_element(By.XPATH,
+                                        #                           "/html/body/div[1]/div/div[1]/div[2]/div[1]/div[1]/div/div/div/div[1]/div/div/div[2]/div[2]/div[3]/div[4]/div[6]")
+                                        time_element = WebDriverWait(driver, 100).until(
+                                            lambda x: x.find_element(By.XPATH, "//*/div[2]/div[4]/p[1]"))
+                                        break
+                            print(driver.title)
                             pt.hotkey('r')
                             time.sleep(0.1)
                             pt.hotkey('v')
