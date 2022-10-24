@@ -447,9 +447,28 @@ def main(z_name,my_name,port):
                                     index)
                                 paste_loc1 = driver.find_element(By.XPATH, xpath1)
                                 print("长度：",len(lis_holetext))
-                                if index >=2:
-                                    action = ActionChains(driver)
-                                    action.scroll_to_element(paste_loc1).click(paste_loc1).perform()
+                                #解决滑动问题
+                                try:
+                                    if index%3 == 0:
+                                        action = ActionChains(driver)
+                                        action.scroll_to_element(paste_loc1).click(paste_loc1).perform()
+                                except Exception as e:
+                                    print(e)
+                                    xpath_before = "//*[starts-with(text(),'Date')]/../../../../following-sibling::tr[{}]/td[1]".format(
+                                        index - 1)
+                                    paste_loc1 = driver.find_element(By.XPATH, xpath_before)
+                                    try:
+                                        action = ActionChains(driver)
+                                        action.scroll_to_element(paste_loc1).click(paste_loc1).perform()
+                                    except Exception as e:
+                                        print(e)
+                                        xpath_before_before = "//*[starts-with(text(),'Date')]/../../../../following-sibling::tr[{}]/td[1]".format(
+                                            index - 2)
+                                        paste_loc1 = driver.find_element(By.XPATH, xpath_before_before)
+                                        action = ActionChains(driver)
+                                        action.scroll_to_element(paste_loc1).click(paste_loc1).perform()
+                                        paste_loc1 = driver.find_element(By.XPATH, xpath_before)
+                                        action.scroll_to_element(paste_loc1).click(paste_loc1).perform()
                                 html = p.get_attribute("outerHTML")
                                 re_compile = re.compile(r'\W\w{5}\s+\d{1}\W')
                                 try:
@@ -480,9 +499,9 @@ def main(z_name,my_name,port):
                             huibaoren_element = driver.find_element(By.XPATH, xpath)
 
                             genjin_people = "@ "+ my_name
-                            # huibaoren_html = """<p><span contenteditable="false" id="617792abb9c549006fd4c154" text="" accesslevel="CONTAINER" usertype="null" class="mentionView-content-wrap inlineNodeView"><span class="inlineNodeViewAddZeroWidthSpace"></span>​<span data-mention-id="617792abb9c549006fd4c154" data-access-level="CONTAINER" spellcheck="false"><span spellcheck="false" class="css-19j4552">{0}</span></span><span class="inlineNodeViewAddZeroWidthSpace"></span></span>  {1} <span class="code" spellcheck="false">{2}</span></p>""".format(genjin_people,ceshi_date,commit_info)
-                            huibaoren_html = """<p><span contenteditable="false" id="617792abb9c549006fd4c154" text="" accesslevel="CONTAINER" usertype="null" class="mentionView-content-wrap inlineNodeView"><span class="inlineNodeViewAddZeroWidthSpace"></span>​<span data-mention-id="617792abb9c549006fd4c154" data-access-level="CONTAINER" spellcheck="false"><span spellcheck="false" class="css-19j4552">{0}</span></span><span class="inlineNodeViewAddZeroWidthSpace"></span></span><span class="code" spellcheck="false"> </span></p>""".format(
-                                genjin_people)
+                            huibaoren_html = """<p><span contenteditable="false" id="617792abb9c549006fd4c154" text="" accesslevel="CONTAINER" usertype="null" class="mentionView-content-wrap inlineNodeView"><span class="inlineNodeViewAddZeroWidthSpace"></span>​<span data-mention-id="617792abb9c549006fd4c154" data-access-level="CONTAINER" spellcheck="false"><span spellcheck="false" class="css-19j4552">{0}</span></span><span class="inlineNodeViewAddZeroWidthSpace"></span></span>  {1} <span class="code" spellcheck="false">{2}</span></p>""".format(genjin_people,ceshi_date,commit_info)
+                            # huibaoren_html = """<p><span contenteditable="false" id="617792abb9c549006fd4c154" text="" accesslevel="CONTAINER" usertype="null" class="mentionView-content-wrap inlineNodeView"><span class="inlineNodeViewAddZeroWidthSpace"></span>​<span data-mention-id="617792abb9c549006fd4c154" data-access-level="CONTAINER" spellcheck="false"><span spellcheck="false" class="css-19j4552">{0}</span></span><span class="inlineNodeViewAddZeroWidthSpace"></span></span><span class="code" spellcheck="false"> </span></p>""".format(
+                            #     genjin_people)
 
 
                             js = "arguments[0].innerHTML='" + huibaoren_html + "'"
