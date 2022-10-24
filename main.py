@@ -443,9 +443,13 @@ def main(z_name,my_name,port):
                                 xpath = "//*[starts-with(text(),'Date')]/../../../../following-sibling::tr[{}]/td[2]".format(
                                     index)
                                 paste_loc = driver.find_element(By.XPATH, xpath)
+                                xpath1 = "//*[starts-with(text(),'Date')]/../../../../following-sibling::tr[{}]/td[1]".format(
+                                    index)
+                                paste_loc1 = driver.find_element(By.XPATH, xpath1)
                                 print("长度：",len(lis_holetext))
-                                action = ActionChains(driver)
-                                action.scroll_to_element(paste_loc).click(paste_loc).perform()
+                                if index >=2:
+                                    action = ActionChains(driver)
+                                    action.scroll_to_element(paste_loc1).click(paste_loc1).perform()
                                 html = p.get_attribute("outerHTML")
                                 re_compile = re.compile(r'\W\w{5}\s+\d{1}\W')
                                 try:
