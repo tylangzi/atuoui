@@ -268,7 +268,7 @@ def autowx1(driver,z_name):
                     print('剩余时间：%s' % (time1 - i))
                     js = "arguments[0].value = '倒计时:{}'".format(time1-i)
                     driver.execute_script(js,jishi_element)
-                    time.sleep(1)
+                    time.sleep(time1)
             # input()
             tijiao = driver.find_element(By.XPATH, "//*[contains(text(),'提交')]")
             tijiao.click()

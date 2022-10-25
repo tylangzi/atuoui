@@ -26,8 +26,8 @@ def autoslack1(driver):
                                 "lidar": "lidar", "Control": "Control"},
         "road_test_prediction": {"Prediction": "Prediction"},
         "road_test_perception": {"Perception": "Perception"},
-        "road_test_deeplearning": {"Perception": "Perception",
-                                    "Perception Scenario": "Perception Scenario"},
+        # "road_test_deeplearning": {"Perception": "Perception",
+        #                             "Perception Scenario": "Perception Scenario"},
         "road_test_traffic_light": {"Perception": "Perception"}}
 
     report = driver.find_element(By.XPATH, "//*/div[@class='ql-editor']")
@@ -54,12 +54,13 @@ def autoslack1(driver):
         title_names = {"road_test_perception": "Perception", "road_test_deeplearning": "Deeplearning",
                         "road_test_traffic_light": "Traffic light"}
         remove_text = {
-            "Perception": ["Traffic Light", "Frustum", "Connected Components", "Point Pillars",
-                            "Occupancy Grid",
-                            "Traffic Cone", "Special Object", "Mask RCNN"],
-            "Deeplearning": ["Connected Components", "Frustum", "Point Pillars", "Traffic Cone",
-                                "Occupancy Grid",
-                                "Special Object", "Mask RCNN", "Water Raindrop"],
+            # "Perception": ["Traffic Light", "Frustum", "Connected Components", "Point Pillars",
+            #                 "Occupancy Grid",
+            #                 "Traffic Cone", "Special Object", "Mask RCNN"],
+            "Perception": ["Traffic Light", "Traffic Cone"],
+            # "Deeplearning": ["Connected Components", "Frustum", "Point Pillars", "Traffic Cone",
+            #                     "Occupancy Grid",
+            #                     "Special Object", "Mask RCNN", "Water Raindrop"],
             "Traffic light": ["Traffic Light"]}
         nothing_flag = False
         # 删除前后内容
