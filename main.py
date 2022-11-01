@@ -5,6 +5,7 @@
 #第三步：鼠标悬停在要发送的消息头部空白区域，按下alt键，即可填写表格
 """
 # import datetime
+import re
 from _curses import getmouse
 import pyautogui as pt
 import pyperclip as pc
@@ -18,6 +19,13 @@ from pynput import keyboard
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from  selenium.webdriver.support import  expected_conditions as EC
+
+import requests
+import pandas
+import openpyxl
+
+
+import autocollection
 import autocon
 import autowx
 import autoslack
@@ -82,7 +90,8 @@ def main(z_name,name,port):
 
     def on_press(key):
         '按下按键时执行。'
-
+        if key == keyboard.Key.f4:
+            autocollection.autocollection(driver, z_name)
         
         try:
             if key == keyboard.Key.alt:
@@ -91,11 +100,13 @@ def main(z_name,name,port):
                         # break
             if key == keyboard.Key.f8:
                 autocon.autocon1(driver,name)
-                # except:
-                #     pass
+
 
             if key == keyboard.Key.f2:
                 autoslack.autoslack1(driver)
+
+
+
         except AttributeError:
             print('special key {0} pressed'.format(
             key))
@@ -136,8 +147,10 @@ def name_config():
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     z_name,name,port=name_config()
-    # z_name = "莫世林"
+    # # z_name = "莫世林"
     main(z_name,name,port)
+
+
 
 
 
